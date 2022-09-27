@@ -10,6 +10,9 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 const notes = require("./routes/notes");
 app.use('/notes', notes);
+app.get('/', (req, res) => {
+    res.send("Try notes/ endpoints");
+});
 app.listen(port || 3000, () => {
     console.log(`Listening on port ${port || 3000}`);
 });
