@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getStats = exports.deleteNote = exports.updateNote = exports.addNote = exports.getNoteById = exports.getNotes = void 0;
-const dummy_notes_1 = __importDefault(require("../helpers/dummy-notes"));
-const validate_obj_1 = __importDefault(require("../services/validate-obj"));
+const dummy_notes_1 = require("../helpers/dummy-notes");
+const validate_obj_1 = require("../services/validate-obj");
 const helpers_1 = require("../helpers/helpers");
 let notesArr = dummy_notes_1.default;
 const PATCH_KEYS = { name: "", category: "", content: "", isArchived: false };
@@ -14,12 +11,12 @@ const CATEGORIES = ['Idea', "Random Thought", "Quote", "Task"];
 function findIndex(id, isAdding = false) {
     const foundIndex = notesArr.findIndex((note) => note.id === id);
     if (foundIndex === -1 && !isAdding) {
-        throw new Error(`Note with id "${id}" wasn't found !`);
+        throw new Error(`Note with id '${id}' wasn't found !`);
     }
     return foundIndex;
 }
 const getNotes = () => {
-    return notesArr;
+    return [...notesArr];
 };
 exports.getNotes = getNotes;
 const getNoteById = (id) => {
@@ -81,3 +78,4 @@ const getStats = () => {
     return result;
 };
 exports.getStats = getStats;
+//# sourceMappingURL=dbMethods.js.map

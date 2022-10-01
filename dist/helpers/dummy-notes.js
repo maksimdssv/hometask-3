@@ -22,7 +22,7 @@ const DUMMY_NOTES = [
         name: "New Feature",
         creationDate: "May 05, 2021",
         category: "Idea",
-        content: "Implement new something 05/05/202106/06/2021",
+        content: "Implement new something 05/05/2021 06/06/2021",
         isArchived: false
     },
     {
@@ -59,3 +59,4 @@ const DUMMY_NOTES = [
     }
 ];
 exports.default = DUMMY_NOTES;
+//# sourceMappingURL=dummy-notes.js.map

@@ -10,13 +10,13 @@ const CATEGORIES = ['Idea', "Random Thought", "Quote", "Task"];
 function findIndex(id: string, isAdding = false) {
     const foundIndex = notesArr.findIndex((note) => note.id === id);
     if (foundIndex === -1 && !isAdding) {
-        throw new Error(`Note with id "${id}" wasn't found !`)
+        throw new Error(`Note with id '${id}' wasn't found !`)
     }
     return foundIndex;
 }
 
 export const getNotes = () => {
-    return notesArr;
+    return [...notesArr];
 }
 
 export const getNoteById = (id: string) => {

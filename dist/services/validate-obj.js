@@ -16,3 +16,4 @@ function isNote(obj, keysObj, isEditing = false) {
     return true;
 }
 exports.default = isNote;
+//# sourceMappingURL=validate-obj.js.map

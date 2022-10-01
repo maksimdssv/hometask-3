@@ -1,18 +1,24 @@
-# Hometask #3
+## Description
 
-Backend with all the required endpoints.
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-Host is available at https://hometask--3.herokuapp.com/
+Hosted version available at https://hometask--3.herokuapp.com/
 
-To run it simply clone the repository, install all the modules, and run
+## Installation
 
+```bash
+$ npm install
 ```
-npm run build
-npm start
-```
 
-If you are interested in dev server, run
+## Running the app
 
-```
-npm run dev
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
 ```

@@ -1,9 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
+const express_1 = require("express");
 const dbMethods_1 = require("../repositories/dbMethods");
 const router = express_1.default.Router();
 router.route("/")
@@ -54,3 +51,4 @@ router.use((err, req, res, next) => {
     res.send(`${err.name}: ${err.message}`);
 });
 module.exports = router;
+//# sourceMappingURL=notes.js.map
