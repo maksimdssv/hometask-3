@@ -6,7 +6,7 @@ import {DataTypes, Sequelize} from "sequelize";
 const {DB_HOST} = process.env;
 
 
-const sequalize = new Sequelize(`postgres://postgres:mysecretpassword@${DB_HOST}:5432/postgres`);
+const sequalize = new Sequelize(`postgres://postgres:mysecretpassword@${DB_HOST ?? "localhost"}:5432/postgres`);
 
 const Note = sequalize.define("Note", {
     id: {
@@ -43,8 +43,6 @@ const ADD_KEYS = {id: "", ...PATCH_KEYS};
 const CATEGORIES = ['Idea', "Random Thought", "Quote", "Task"];
 
 export const connectToDB = async () => {
-    console.log(DB_HOST);
-    await console.log("hi");
     try {
         await sequalize.authenticate()
         return Promise.resolve("Done")
