@@ -1,66 +1,114 @@
 import DUMMY_NOTES, {Note} from "../helpers/dummy-notes";
 import isNote from "../services/validate-obj";
 import {getCurrDate} from "../helpers/helpers";
+import {DataTypes, Sequelize} from "sequelize";
 
-let notesArr = DUMMY_NOTES;
+const {DB_HOST} = process.env;
+
+
+const sequalize = new Sequelize(`postgres://postgres:mysecretpassword@${DB_HOST}:5432/postgres`);
+
+const Note = sequalize.define("Note", {
+    id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey: true
+    },
+    name: {
+        type: DataTypes.STRING
+    },
+    category: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    creationDate: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    content: {
+        type: DataTypes.STRING
+    },
+    isArchived: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    }
+})
+
+Note.sync().then(async () => {
+    if ((await Note.findAll()).length === 0) DUMMY_NOTES.forEach((note) => Note.create({...note}))
+})
+
 const PATCH_KEYS = {name: "", category: "", content: "", isArchived: false};
 const ADD_KEYS = {id: "", ...PATCH_KEYS};
 const CATEGORIES = ['Idea', "Random Thought", "Quote", "Task"];
 
-function findIndex(id: string, isAdding = false) {
-    const foundIndex = notesArr.findIndex((note) => note.id === id);
-    if (foundIndex === -1 && !isAdding) {
+export const connectToDB = async () => {
+    console.log(DB_HOST);
+    await console.log("hi");
+    try {
+        await sequalize.authenticate()
+        return Promise.resolve("Done")
+    } catch (err) {
+        return Promise.reject("Cant connect: " + err)
+    }
+}
+
+async function findByIndex(id: string, isAdding = false) {
+    const foundNote = await Note.findOne({attributes: {exclude: ["createdAt", 'updatedAt']}, where: {id: id}});
+    if (foundNote === null && !isAdding) {
         throw new Error(`Note with id "${id}" wasn't found !`)
     }
-    return foundIndex;
+    return foundNote;
 }
 
-export const getNotes = () => {
-    return notesArr;
+export const getNotes = async () => {
+    const notes = await Note.findAll({attributes: {exclude: ['createdAt', 'updatedAt']}, order: [['id', 'ASC']]});
+    return notes.map(note => note.toJSON());
 }
 
-export const getNoteById = (id: string) => {
-    const index = findIndex(id);
-    return notesArr[index];
+export const getNoteById = async (id: string) => {
+    const note = await findByIndex(id);
+    return note?.toJSON();
 }
 
 
-export const addNote = (note: Note) => {
+export const addNote = async (note: Note) => {
     try {
         isNote(note, ADD_KEYS)
-        if (findIndex(note.id, true) !== -1) throw new Error(`note with this ID already exists!`);
+        if (await findByIndex(note.id, true)) throw new Error(`note with this ID already exists!`);
         if (!CATEGORIES.includes(note.category)) throw new Error(`Category must be one of the followed: ${CATEGORIES.join(", ")}`);
         const newNote = {...note, creationDate: getCurrDate()}
-        notesArr.push(newNote);
+        await Note.create({...newNote})
         return newNote;
     } catch (err: any) {
         throw new Error("Something wrong with provided obj: " + err.message);
     }
 }
 
-export const updateNote = (id: string, newData: Note) => {
+export const updateNote = async (id: string, newData: Note) => {
     try {
-        const index = findIndex(id);
+        const note = await findByIndex(id);
         isNote(newData, PATCH_KEYS, true);
         if (newData.category !== undefined && !CATEGORIES.includes(newData.category)) throw new Error(`Category must be one of the followed: ${CATEGORIES.join(", ")}`);
-        for (const key in newData) {
-            notesArr[index][key as keyof {}] = newData[key as keyof {}];
-        }
-        return notesArr[index];
+        note?.set(newData);
+        await note?.save();
+        return note?.toJSON();
     } catch (err: any) {
         throw new Error("Something wrong with provided obj: " + err.message);
     }
 }
 
-export const deleteNote = (id: string) => {
-    const index = findIndex(id);
-    notesArr.splice(index, 1);
+export const deleteNote = async (id: string) => {
+    const note = await findByIndex(id);
+    note?.destroy();
     return "Successfully deleted";
 }
 
-export const getStats = () => {
+export const getStats = async () => {
+    const notes = await Note.findAll();
+    const formattedNotes: Note[] = notes.map(note => note.toJSON());
     const result: { [key: string]: { active: number, archived: number } } = {};
-    notesArr.forEach((note) => {
+    formattedNotes.forEach((note) => {
         const category = note.category;
         if (result[category] === undefined) {
             result[category] = {
